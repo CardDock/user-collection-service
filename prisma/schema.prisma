@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CardCondition {
+  MINT
+  NEAR_MINT
+  LIGHTLY_PLAYED
+  PLAYED
+  DAMAGED
+}
+
+enum CardRarity {
+  COMMON
+  RARE
+  SUPER_RARE
+  ULTRA_RARE
+  SECRET_RARE
+  ULTIMATE_RARE
+  GHOST_RARE
+  PRISMATIC_SECRET_RARE
+  STARLIGHT_RARE
+  COLLECTORS_RARE
+}
+
+enum CardEdition {
+  FIRST_EDITION
+  UNLIMITED
+}
+
+model UserCollection {
+  id            String        @id @default(uuid())
+  userId        String        @map("user_id")
+  cardId        Int           @map("card_id")
+  condition     CardCondition
+  rarity        CardRarity
+  edition       CardEdition
+  quantity      Int           @default(1)
+  isFoil        Boolean       @default(false) @map("is_foil")
+  language      String        @default("en")
+  notes         String?
+  grade         String?
+  purchasePrice Decimal?      @map("purchase_price") @db.Decimal(10, 2)
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  @@unique([userId, cardId, condition, rarity, edition, isFoil, language])
+  @@index([userId])
+  @@index([cardId])
+  @@map("user_collections")
+}
