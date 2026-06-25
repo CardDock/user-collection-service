@@ -8,7 +8,7 @@ import {
   IsIn,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
-import { $Enums } from '../../generated/prisma/client';
+import { $Enums } from '@prisma/client';
 
 const SORT_FIELDS = [
   'createdAt',

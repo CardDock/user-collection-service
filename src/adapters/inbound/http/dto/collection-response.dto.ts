@@ -1,6 +1,4 @@
-import { Expose } from 'class-transformer';
-
-class PaginationMeta {
+export class PaginationMetaDto {
   page: number;
   limit: number;
   total: number;
@@ -9,7 +7,5 @@ class PaginationMeta {
 
 export class CollectionResponseDto<T> {
   data: T[];
-
-  @Expose()
-  meta: PaginationMeta;
+  meta: PaginationMetaDto;
 }
