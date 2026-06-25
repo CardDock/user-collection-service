@@ -72,9 +72,6 @@
         "tsconfig": "tsconfig.test.json"
       }]
     },
-    "moduleNameMapper": {
-      "^.*/generated/prisma/client$": "<rootDir>/prisma/prisma-client.cjs.ts"
-    },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],

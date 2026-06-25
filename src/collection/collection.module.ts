@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
-import { CollectionController } from '../adapters/inbound/http/collection.controller';
-import { GetCollectionService } from '../core/services/get-collection.service';
-import { PrismaCollectionRepository } from '../adapters/outbound/prisma/prisma-collection.repository';
+import { CollectionController } from './infrastructure/http/collection.controller';
 import {
   GET_COLLECTION_USE_CASE,
-} from '../core/ports/inbound/get-collection.use-case';
-import {
-  COLLECTION_REPOSITORY_PORT,
-} from '../core/ports/outbound/collection-repository.port';
+  GetCollectionService,
+} from './application/get-collection.use-case';
+import { PrismaCollectionRepository } from './infrastructure/persistence/prisma-collection.repository';
+import { COLLECTION_REPOSITORY_PORT } from './domain/collection-repository.port';
 
 @Module({
   controllers: [CollectionController],

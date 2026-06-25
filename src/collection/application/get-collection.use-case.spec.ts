@@ -1,6 +1,6 @@
-import { GetCollectionService } from './get-collection.service';
-import { COLLECTION_REPOSITORY_PORT } from '../ports/outbound/collection-repository.port';
-import { CollectionQuery } from '../ports/inbound/get-collection.use-case';
+import { GetCollectionService } from './get-collection.use-case';
+import { COLLECTION_REPOSITORY_PORT } from '../domain/collection-repository.port';
+import { CollectionQuery, GetCollectionUseCase } from './get-collection.use-case';
 import { UserCollectionEntity } from '../domain/user-collection.entity';
 
 const mockRepo = {
@@ -10,7 +10,7 @@ const mockRepo = {
 };
 
 describe('GetCollectionService', () => {
-  let service: GetCollectionService;
+  let service: GetCollectionUseCase;
 
   beforeEach(() => {
     service = new GetCollectionService(mockRepo);

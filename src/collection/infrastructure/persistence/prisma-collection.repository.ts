@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import {
-  CollectionRepositoryPort,
-} from '../../../core/ports/outbound/collection-repository.port';
-import { UserCollectionEntity } from '../../../core/domain/user-collection.entity';
+import { CollectionRepositoryPort } from '../../domain/collection-repository.port';
+import { UserCollectionEntity } from '../../domain/user-collection.entity';
 
 @Injectable()
 export class PrismaCollectionRepository implements CollectionRepositoryPort {

@@ -8,8 +8,8 @@ import {
 } from '@nestjs/common';
 import {
   GET_COLLECTION_USE_CASE,
-} from '../../../core/ports/inbound/get-collection.use-case';
-import type { GetCollectionUseCase } from '../../../core/ports/inbound/get-collection.use-case';
+} from '../../application/get-collection.use-case';
+import type { GetCollectionUseCase } from '../../application/get-collection.use-case';
 import { QueryCollectionDto } from './dto/query-collection.dto';
 
 @Controller('api/v1/collections')

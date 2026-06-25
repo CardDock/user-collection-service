@@ -1,4 +1,4 @@
-import { UserCollectionEntity } from '../../domain/user-collection.entity';
+import { UserCollectionEntity } from './user-collection.entity';
 
 export const COLLECTION_REPOSITORY_PORT = Symbol('COLLECTION_REPOSITORY_PORT');
 

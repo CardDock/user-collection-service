@@ -1,14 +1,35 @@
-import {
-  GetCollectionUseCase,
-  CollectionQuery,
-} from '../ports/inbound/get-collection.use-case';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   COLLECTION_REPOSITORY_PORT,
-} from '../ports/outbound/collection-repository.port';
-import type { CollectionRepositoryPort } from '../ports/outbound/collection-repository.port';
+} from '../domain/collection-repository.port';
+import type { CollectionRepositoryPort } from '../domain/collection-repository.port';
 import { PaginatedResult } from '../domain/pagination';
 import { UserCollectionEntity } from '../domain/user-collection.entity';
-import { Inject, Injectable } from '@nestjs/common';
+
+export interface CollectionQuery {
+  page: number;
+  limit: number;
+  condition?: string;
+  rarity?: string;
+  edition?: string;
+  isFoil?: boolean;
+  sort: string;
+  order: 'asc' | 'desc';
+}
+
+export const GET_COLLECTION_USE_CASE = Symbol('GET_COLLECTION_USE_CASE');
+
+export interface GetCollectionUseCase {
+  findByUser(
+    userId: string,
+    query: CollectionQuery,
+  ): Promise<PaginatedResult<UserCollectionEntity>>;
+
+  findOne(
+    userId: string,
+    cardId: string,
+  ): Promise<UserCollectionEntity | null>;
+}
 
 @Injectable()
 export class GetCollectionService implements GetCollectionUseCase {
