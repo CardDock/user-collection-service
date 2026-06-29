@@ -1,18 +1,18 @@
-import { GetCollectionService } from './get-collection.use-case';
-import { COLLECTION_REPOSITORY_PORT } from '../domain/collection-repository.port';
-import { CollectionQuery, GetCollectionUseCase } from './get-collection.use-case';
-import { UserCollectionEntity } from '../domain/user-collection.entity';
-
-const mockRepo = {
-  findMany: jest.fn(),
-  count: jest.fn(),
-  findFirst: jest.fn(),
-};
+import { createMock } from '@golevelup/ts-jest';
+import {
+  GetCollectionService,
+  CollectionQuery,
+  GetCollectionUseCase,
+} from '../../../src/collection/application/get-collection.use-case';
+import { CollectionRepositoryPort } from '../../../src/collection/domain/collection-repository.port';
+import { UserCollectionEntity } from '../../../src/collection/domain/user-collection.entity';
 
 describe('GetCollectionService', () => {
   let service: GetCollectionUseCase;
+  let mockRepo: jest.Mocked<CollectionRepositoryPort>;
 
   beforeEach(() => {
+    mockRepo = createMock<CollectionRepositoryPort>();
     service = new GetCollectionService(mockRepo);
     jest.clearAllMocks();
   });
@@ -27,7 +27,24 @@ describe('GetCollectionService', () => {
     };
 
     it('should return paginated results', async () => {
-      const fakeData = [new UserCollectionEntity('1', userId, 123, 'MINT' as any, 'ULTRA_RARE' as any, 'FIRST_EDITION' as any, 2, true, 'en', null, null, null, new Date(), new Date())];
+      const fakeData = [
+        new UserCollectionEntity(
+          '1',
+          userId,
+          123,
+          'MINT' as any,
+          'ULTRA_RARE' as any,
+          'FIRST_EDITION' as any,
+          2,
+          true,
+          'en',
+          null,
+          null,
+          null,
+          new Date(),
+          new Date(),
+        ),
+      ];
       mockRepo.findMany.mockResolvedValue(fakeData);
       mockRepo.count.mockResolvedValue(1);
 
@@ -108,7 +125,22 @@ describe('GetCollectionService', () => {
 
   describe('findOne', () => {
     it('should return a record when found', async () => {
-      const fakeRecord = new UserCollectionEntity('card-1', 'user-1', 456, 'MINT' as any, 'ULTRA_RARE' as any, 'FIRST_EDITION' as any, 1, false, 'en', null, null, null, new Date(), new Date());
+      const fakeRecord = new UserCollectionEntity(
+        'card-1',
+        'user-1',
+        456,
+        'MINT' as any,
+        'ULTRA_RARE' as any,
+        'FIRST_EDITION' as any,
+        1,
+        false,
+        'en',
+        null,
+        null,
+        null,
+        new Date(),
+        new Date(),
+      );
       mockRepo.findFirst.mockResolvedValue(fakeRecord);
 
       const result = await service.findOne('user-1', 'card-1');

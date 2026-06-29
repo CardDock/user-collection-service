@@ -1,17 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
-import {
-  COLLECTION_REPOSITORY_PORT,
+import type {
+  CollectionRepositoryPort,
+  CollectionWhereInput,
 } from '../domain/collection-repository.port';
-import type { CollectionRepositoryPort } from '../domain/collection-repository.port';
 import { PaginatedResult } from '../domain/pagination';
 import { UserCollectionEntity } from '../domain/user-collection.entity';
+import { CardCondition, CardRarity, CardEdition } from '../domain/enums';
 
 export interface CollectionQuery {
   page: number;
   limit: number;
-  condition?: string;
-  rarity?: string;
-  edition?: string;
+  condition?: CardCondition;
+  rarity?: CardRarity;
+  edition?: CardEdition;
   isFoil?: boolean;
   sort: string;
   order: 'asc' | 'desc';
@@ -25,18 +25,11 @@ export interface GetCollectionUseCase {
     query: CollectionQuery,
   ): Promise<PaginatedResult<UserCollectionEntity>>;
 
-  findOne(
-    userId: string,
-    cardId: string,
-  ): Promise<UserCollectionEntity | null>;
+  findOne(userId: string, cardId: string): Promise<UserCollectionEntity | null>;
 }
 
-@Injectable()
 export class GetCollectionService implements GetCollectionUseCase {
-  constructor(
-    @Inject(COLLECTION_REPOSITORY_PORT)
-    private readonly repository: CollectionRepositoryPort,
-  ) {}
+  constructor(private readonly repository: CollectionRepositoryPort) {}
 
   async findByUser(
     userId: string,
@@ -53,7 +46,7 @@ export class GetCollectionService implements GetCollectionUseCase {
       order = 'desc',
     } = query;
 
-    const where: Record<string, unknown> = { userId };
+    const where: CollectionWhereInput = { userId };
 
     if (condition) where.condition = condition;
     if (rarity) where.rarity = rarity;

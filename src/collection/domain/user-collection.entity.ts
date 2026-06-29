@@ -1,8 +1,4 @@
-import { $Enums } from '@prisma/client';
-
-export type CardCondition = $Enums.CardCondition;
-export type CardRarity = $Enums.CardRarity;
-export type CardEdition = $Enums.CardEdition;
+import { CardCondition, CardRarity, CardEdition } from './enums';
 
 export class UserCollectionEntity {
   constructor(

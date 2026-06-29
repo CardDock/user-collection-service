@@ -8,7 +8,7 @@ import {
   IsIn,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
-import { $Enums } from '@prisma/client';
+import { CardCondition, CardRarity, CardEdition } from '../../../domain/enums';
 
 const SORT_FIELDS = [
   'createdAt',
@@ -36,16 +36,16 @@ export class QueryCollectionDto {
   limit?: number = 20;
 
   @IsOptional()
-  @IsEnum($Enums.CardCondition)
-  condition?: $Enums.CardCondition;
+  @IsEnum(CardCondition)
+  condition?: CardCondition;
 
   @IsOptional()
-  @IsEnum($Enums.CardRarity)
-  rarity?: $Enums.CardRarity;
+  @IsEnum(CardRarity)
+  rarity?: CardRarity;
 
   @IsOptional()
-  @IsEnum($Enums.CardEdition)
-  edition?: $Enums.CardEdition;
+  @IsEnum(CardEdition)
+  edition?: CardEdition;
 
   @IsOptional()
   @IsBoolean()
