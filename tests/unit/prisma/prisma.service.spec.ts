@@ -23,7 +23,7 @@ describe('PrismaService', () => {
   });
 
   it('should be defined', async () => {
-    const { PrismaService } = await import('../../src/prisma/prisma.service');
+    const { PrismaService } = await import('../../../src/prisma/prisma.service');
     const service = new PrismaService();
     expect(service).toBeDefined();
     expect(typeof service.onModuleInit).toBe('function');
@@ -31,7 +31,7 @@ describe('PrismaService', () => {
   });
 
   it('should call $connect on module init', async () => {
-    const { PrismaService } = await import('../../src/prisma/prisma.service');
+    const { PrismaService } = await import('../../../src/prisma/prisma.service');
     const service = new PrismaService();
 
     await service.onModuleInit();
@@ -40,7 +40,7 @@ describe('PrismaService', () => {
   });
 
   it('should call $disconnect on module destroy', async () => {
-    const { PrismaService } = await import('../../src/prisma/prisma.service');
+    const { PrismaService } = await import('../../../src/prisma/prisma.service');
     const service = new PrismaService();
 
     await service.onModuleDestroy();

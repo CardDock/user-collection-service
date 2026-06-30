@@ -1,20 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { createMock } from '@golevelup/ts-jest';
-import { CollectionController } from '../../../../src/collection/infrastructure/http/collection.controller';
+import { CollectionController } from '../../../../../src/collection/infrastructure/http/collection.controller';
 import {
   GET_COLLECTION_USE_CASE,
   GetCollectionUseCase,
-} from '../../../../src/collection/application/get-collection.use-case';
+} from '../../../../../src/collection/application/get-collection.use-case';
 import {
   MANAGE_COLLECTION_USE_CASE,
   ManageCollectionUseCase,
-} from '../../../../src/collection/application/manage-collection.use-case';
-import { UserCollectionEntity } from '../../../../src/collection/domain/user-collection.entity';
+} from '../../../../../src/collection/application/manage-collection.use-case';
+import { UserCollectionEntity } from '../../../../../src/collection/domain/user-collection.entity';
 import {
   CardCondition,
   CardRarity,
   CardEdition,
-} from '../../../../src/collection/domain/enums';
+} from '../../../../../src/collection/domain/enums';
 
 describe('CollectionController', () => {
   let controller: CollectionController;

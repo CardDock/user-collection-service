@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { Test, TestingModule } from '@nestjs/testing';
 import { createMock } from '@golevelup/ts-jest';
-import { CollectionModule } from '../../src/collection/collection.module';
-import { PrismaModule } from '../../src/prisma/prisma.module';
-import { PrismaService } from '../../src/prisma/prisma.service';
+import { CollectionModule } from '../../../src/collection/collection.module';
+import { PrismaModule } from '../../../src/prisma/prisma.module';
+import { PrismaService } from '../../../src/prisma/prisma.service';
 
 jest.mock('@prisma/adapter-pg', () => ({
   PrismaPg: jest.fn().mockImplementation(() => ({})),

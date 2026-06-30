@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { createMock } from '@golevelup/ts-jest';
-import { PrismaCollectionRepository } from '../../../../src/collection/infrastructure/persistence/prisma-collection.repository';
-import { PrismaService } from '../../../../src/prisma/prisma.service';
+import { PrismaCollectionRepository } from '../../../../../src/collection/infrastructure/persistence/prisma-collection.repository';
+import { PrismaService } from '../../../../../src/prisma/prisma.service';
 
 describe('PrismaCollectionRepository', () => {
   let repository: PrismaCollectionRepository;

@@ -1,4 +1,4 @@
-import { UserCollectionEntity } from '../../../src/collection/domain/user-collection.entity';
+import { UserCollectionEntity } from '../../../../src/collection/domain/user-collection.entity';
 
 describe('UserCollectionEntity', () => {
   it('should create an instance with all properties', () => {

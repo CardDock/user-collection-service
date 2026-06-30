@@ -3,14 +3,14 @@ import {
   GetCollectionService,
   CollectionQuery,
   GetCollectionUseCase,
-} from '../../../src/collection/application/get-collection.use-case';
-import { CollectionRepositoryPort } from '../../../src/collection/domain/collection-repository.port';
-import { UserCollectionEntity } from '../../../src/collection/domain/user-collection.entity';
+} from '../../../../src/collection/application/get-collection.use-case';
+import { CollectionRepositoryPort } from '../../../../src/collection/domain/collection-repository.port';
+import { UserCollectionEntity } from '../../../../src/collection/domain/user-collection.entity';
 import {
   CardCondition,
   CardRarity,
   CardEdition,
-} from '../../../src/collection/domain/enums';
+} from '../../../../src/collection/domain/enums';
 
 describe('GetCollectionService', () => {
   let service: GetCollectionUseCase;

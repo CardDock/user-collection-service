@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { QueryCollectionDto } from '../../../../../src/collection/infrastructure/http/dto/query-collection.dto';
+import { QueryCollectionDto } from '../../../../../../src/collection/infrastructure/http/dto/query-collection.dto';
 
 describe('QueryCollectionDto', () => {
   it('should apply default values for page and limit', () => {
