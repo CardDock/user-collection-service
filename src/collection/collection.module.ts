@@ -4,6 +4,10 @@ import {
   GET_COLLECTION_USE_CASE,
   GetCollectionService,
 } from './application/get-collection.use-case';
+import {
+  MANAGE_COLLECTION_USE_CASE,
+  ManageCollectionService,
+} from './application/manage-collection.use-case';
 import { PrismaCollectionRepository } from './infrastructure/persistence/prisma-collection.repository';
 import { COLLECTION_REPOSITORY_PORT } from './domain/collection-repository.port';
 import type { CollectionRepositoryPort } from './domain/collection-repository.port';
@@ -15,6 +19,12 @@ import type { CollectionRepositoryPort } from './domain/collection-repository.po
       provide: GET_COLLECTION_USE_CASE,
       useFactory: (repository: CollectionRepositoryPort) =>
         new GetCollectionService(repository),
+      inject: [COLLECTION_REPOSITORY_PORT],
+    },
+    {
+      provide: MANAGE_COLLECTION_USE_CASE,
+      useFactory: (repository: CollectionRepositoryPort) =>
+        new ManageCollectionService(repository),
       inject: [COLLECTION_REPOSITORY_PORT],
     },
     {

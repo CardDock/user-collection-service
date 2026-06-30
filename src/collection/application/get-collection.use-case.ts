@@ -25,7 +25,7 @@ export interface GetCollectionUseCase {
     query: CollectionQuery,
   ): Promise<PaginatedResult<UserCollectionEntity>>;
 
-  findOne(userId: string, cardId: string): Promise<UserCollectionEntity | null>;
+  findOne(id: string): Promise<UserCollectionEntity | null>;
 }
 
 export class GetCollectionService implements GetCollectionUseCase {
@@ -71,10 +71,7 @@ export class GetCollectionService implements GetCollectionUseCase {
     };
   }
 
-  async findOne(
-    userId: string,
-    cardId: string,
-  ): Promise<UserCollectionEntity | null> {
-    return this.repository.findFirst({ id: cardId, userId });
+  async findOne(id: string): Promise<UserCollectionEntity | null> {
+    return this.repository.findFirst({ id });
   }
 }

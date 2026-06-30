@@ -5,19 +5,31 @@ import {
   GET_COLLECTION_USE_CASE,
   GetCollectionUseCase,
 } from '../../../../src/collection/application/get-collection.use-case';
+import {
+  MANAGE_COLLECTION_USE_CASE,
+  ManageCollectionUseCase,
+} from '../../../../src/collection/application/manage-collection.use-case';
 import { UserCollectionEntity } from '../../../../src/collection/domain/user-collection.entity';
+import {
+  CardCondition,
+  CardRarity,
+  CardEdition,
+} from '../../../../src/collection/domain/enums';
 
 describe('CollectionController', () => {
   let controller: CollectionController;
-  let mockUseCase: jest.Mocked<GetCollectionUseCase>;
+  let mockGetUseCase: jest.Mocked<GetCollectionUseCase>;
+  let mockManageUseCase: jest.Mocked<ManageCollectionUseCase>;
 
   beforeEach(async () => {
-    mockUseCase = createMock<GetCollectionUseCase>();
+    mockGetUseCase = createMock<GetCollectionUseCase>();
+    mockManageUseCase = createMock<ManageCollectionUseCase>();
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CollectionController],
       providers: [
-        { provide: GET_COLLECTION_USE_CASE, useValue: mockUseCase },
+        { provide: GET_COLLECTION_USE_CASE, useValue: mockGetUseCase },
+        { provide: MANAGE_COLLECTION_USE_CASE, useValue: mockManageUseCase },
       ],
     }).compile();
 
@@ -31,7 +43,7 @@ describe('CollectionController', () => {
         data: [],
         meta: { page: 1, limit: 20, total: 0, totalPages: 0 },
       };
-      mockUseCase.findByUser.mockResolvedValue(paginatedResult);
+      mockGetUseCase.findByUser.mockResolvedValue(paginatedResult);
 
       const result = await controller.findByUser('user-1', {
         page: 1,
@@ -40,7 +52,7 @@ describe('CollectionController', () => {
         order: 'desc',
       } as any);
 
-      expect(mockUseCase.findByUser).toHaveBeenCalledWith('user-1', {
+      expect(mockGetUseCase.findByUser).toHaveBeenCalledWith('user-1', {
         page: 1,
         limit: 20,
         condition: undefined,
@@ -54,7 +66,7 @@ describe('CollectionController', () => {
     });
 
     it('should pass optional filters from the DTO', async () => {
-      mockUseCase.findByUser.mockResolvedValue({
+      mockGetUseCase.findByUser.mockResolvedValue({
         data: [],
         meta: { page: 1, limit: 20, total: 0, totalPages: 0 },
       });
@@ -70,7 +82,7 @@ describe('CollectionController', () => {
         order: 'asc',
       } as any);
 
-      expect(mockUseCase.findByUser).toHaveBeenCalledWith('user-1', {
+      expect(mockGetUseCase.findByUser).toHaveBeenCalledWith('user-1', {
         page: 2,
         limit: 10,
         condition: 'MINT',
@@ -89,9 +101,9 @@ describe('CollectionController', () => {
         'c1',
         'user-1',
         123,
-        'MINT' as any,
-        'ULTRA_RARE' as any,
-        'FIRST_EDITION' as any,
+        CardCondition.MINT,
+        CardRarity.ULTRA_RARE,
+        CardEdition.FIRST_EDITION,
         1,
         false,
         'en',
@@ -101,19 +113,19 @@ describe('CollectionController', () => {
         new Date(),
         new Date(),
       );
-      mockUseCase.findOne.mockResolvedValue(entity);
+      mockGetUseCase.findOne.mockResolvedValue(entity);
 
-      const result = await controller.findOne('user-1', 'c1');
+      const result = await controller.findOne('c1');
 
-      expect(mockUseCase.findOne).toHaveBeenCalledWith('user-1', 'c1');
+      expect(mockGetUseCase.findOne).toHaveBeenCalledWith('c1');
       expect(result).toEqual({ data: entity });
     });
 
     it('should throw NotFoundException when card is not found', async () => {
-      mockUseCase.findOne.mockResolvedValue(null);
+      mockGetUseCase.findOne.mockResolvedValue(null);
 
-      await expect(controller.findOne('user-1', 'nonexistent')).rejects.toThrow(
-        'Card not found in collection',
+      await expect(controller.findOne('nonexistent')).rejects.toThrow(
+        'Collection entry not found',
       );
     });
   });

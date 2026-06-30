@@ -6,6 +6,11 @@ import {
 } from '../../../src/collection/application/get-collection.use-case';
 import { CollectionRepositoryPort } from '../../../src/collection/domain/collection-repository.port';
 import { UserCollectionEntity } from '../../../src/collection/domain/user-collection.entity';
+import {
+  CardCondition,
+  CardRarity,
+  CardEdition,
+} from '../../../src/collection/domain/enums';
 
 describe('GetCollectionService', () => {
   let service: GetCollectionUseCase;
@@ -32,9 +37,9 @@ describe('GetCollectionService', () => {
           '1',
           userId,
           123,
-          'MINT' as any,
-          'ULTRA_RARE' as any,
-          'FIRST_EDITION' as any,
+          CardCondition.MINT,
+          CardRarity.ULTRA_RARE,
+          CardEdition.FIRST_EDITION,
           2,
           true,
           'en',
@@ -69,18 +74,18 @@ describe('GetCollectionService', () => {
 
       await service.findByUser(userId, {
         ...defaultQuery,
-        condition: 'MINT',
-        rarity: 'ULTRA_RARE',
-        edition: 'FIRST_EDITION',
+        condition: CardCondition.MINT,
+        rarity: CardRarity.ULTRA_RARE,
+        edition: CardEdition.FIRST_EDITION,
         isFoil: true,
       });
 
       expect(mockRepo.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           userId,
-          condition: 'MINT',
-          rarity: 'ULTRA_RARE',
-          edition: 'FIRST_EDITION',
+          condition: CardCondition.MINT,
+          rarity: CardRarity.ULTRA_RARE,
+          edition: CardEdition.FIRST_EDITION,
           isFoil: true,
         }),
         expect.any(Object),
@@ -129,9 +134,9 @@ describe('GetCollectionService', () => {
         'card-1',
         'user-1',
         456,
-        'MINT' as any,
-        'ULTRA_RARE' as any,
-        'FIRST_EDITION' as any,
+        CardCondition.MINT,
+        CardRarity.ULTRA_RARE,
+        CardEdition.FIRST_EDITION,
         1,
         false,
         'en',
@@ -143,11 +148,10 @@ describe('GetCollectionService', () => {
       );
       mockRepo.findFirst.mockResolvedValue(fakeRecord);
 
-      const result = await service.findOne('user-1', 'card-1');
+      const result = await service.findOne('card-1');
 
       expect(mockRepo.findFirst).toHaveBeenCalledWith({
         id: 'card-1',
-        userId: 'user-1',
       });
       expect(result).toEqual(fakeRecord);
     });
@@ -155,7 +159,7 @@ describe('GetCollectionService', () => {
     it('should return null when not found', async () => {
       mockRepo.findFirst.mockResolvedValue(null);
 
-      const result = await service.findOne('user-1', 'nonexistent');
+      const result = await service.findOne('nonexistent');
 
       expect(result).toBeNull();
     });

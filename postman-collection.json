@@ -1,0 +1,322 @@
+{
+  "info": {
+    "name": "User Collection Service API",
+    "description": "API REST para gestionar colecciones de cartas. Servidor: http://localhost:3002",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3002"
+    },
+    {
+      "key": "apiPrefix",
+      "value": "api/v1"
+    },
+    {
+      "key": "userId",
+      "value": "user-123"
+    },
+    {
+      "key": "entryId",
+      "value": "REEMPLAZAR_CON_UUID"
+    }
+  ],
+  "item": [
+    {
+      "name": "Collections",
+      "item": [
+        {
+          "name": "Listar cartas de un usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/{{userId}}/cards",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "{{userId}}", "cards"]
+            },
+            "description": "Obtiene todas las cartas de la colección de un usuario con paginación."
+          },
+          "response": [
+            {
+              "name": "Ejemplo de respuesta",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"userId\": \"user-123\",\n      \"cardId\": 123,\n      \"condition\": \"MINT\",\n      \"rarity\": \"ULTRA_RARE\",\n      \"edition\": \"FIRST_EDITION\",\n      \"quantity\": 2,\n      \"isFoil\": true,\n      \"language\": \"en\",\n      \"notes\": null,\n      \"grade\": null,\n      \"purchasePrice\": null,\n      \"createdAt\": \"2026-06-28T12:00:00.000Z\",\n      \"updatedAt\": \"2026-06-29T15:30:00.000Z\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"totalPages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Listar cartas con filtros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/{{userId}}/cards?page=1&limit=10&condition=MINT&rarity=ULTRA_RARE&edition=FIRST_EDITION&isFoil=true&sort=purchasePrice&order=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "{{userId}}", "cards"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "condition", "value": "MINT" },
+                { "key": "rarity", "value": "ULTRA_RARE" },
+                { "key": "edition", "value": "FIRST_EDITION" },
+                { "key": "isFoil", "value": "true" },
+                { "key": "sort", "value": "purchasePrice" },
+                { "key": "order", "value": "desc" }
+              ]
+            },
+            "description": "Obtiene cartas filtradas por condition, rarity, edition, isFoil, con ordenamiento por purchasePrice descendente."
+          }
+        },
+        {
+          "name": "Listar cartas con paginación manual",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/{{userId}}/cards?page=2&limit=5&sort=createdAt&order=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "{{userId}}", "cards"],
+              "query": [
+                { "key": "page", "value": "2" },
+                { "key": "limit", "value": "5" },
+                { "key": "sort", "value": "createdAt" },
+                { "key": "order", "value": "asc" }
+              ]
+            },
+            "description": "Segunda página con 5 resultados por página, ordenado por createdAt ascendente."
+          }
+        },
+        {
+          "name": "Agregar carta a colección",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardId\": 456,\n  \"condition\": \"NEAR_MINT\",\n  \"rarity\": \"SECRET_RARE\",\n  \"edition\": \"FIRST_EDITION\",\n  \"isFoil\": true,\n  \"language\": \"en\",\n  \"quantity\": 1,\n  \"notes\": \"Abrir sobres edición limitada\",\n  \"grade\": \"9.5\",\n  \"purchasePrice\": 45000.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/{{userId}}/cards",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "{{userId}}", "cards"]
+            },
+            "description": "Agrega una carta a la colección. Si ya existe una carta con la misma combinación (cardId + condition + rarity + edition + isFoil + language), incrementa la cantidad (upsert)."
+          },
+          "response": [
+            {
+              "name": "Creada exitosamente",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"userId\": \"user-123\",\n    \"cardId\": 456,\n    \"condition\": \"NEAR_MINT\",\n    \"rarity\": \"SECRET_RARE\",\n    \"edition\": \"FIRST_EDITION\",\n    \"quantity\": 3,\n    \"isFoil\": true,\n    \"language\": \"en\",\n    \"notes\": \"Abrir sobres edición limitada\",\n    \"grade\": \"9.5\",\n    \"purchasePrice\": 45000.00,\n    \"createdAt\": \"2026-06-30T10:00:00.000Z\",\n    \"updatedAt\": \"2026-06-30T10:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cards (por UUID)",
+      "item": [
+        {
+          "name": "Obtener carta por UUID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/cards/{{entryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "cards", "{{entryId}}"]
+            },
+            "description": "Obtiene una carta específica de la colección por su UUID. El {{entryId}} es el UUID único del registro, no el cardId de la carta."
+          }
+        },
+        {
+          "name": "Actualizar carta (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 5,\n  \"notes\": \"Compra en lote - actualizado\",\n  \"grade\": \"10\",\n  \"purchasePrice\": 52000.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/cards/{{entryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "cards", "{{entryId}}"]
+            },
+            "description": "Actualiza parcialmente un registro de colección. Solo se envían los campos a modificar. Todos los campos son opcionales en el body."
+          },
+          "response": [
+            {
+              "name": "Actualizada exitosamente",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"userId\": \"user-123\",\n    \"cardId\": 456,\n    \"condition\": \"NEAR_MINT\",\n    \"rarity\": \"SECRET_RARE\",\n    \"edition\": \"FIRST_EDITION\",\n    \"quantity\": 5,\n    \"isFoil\": true,\n    \"language\": \"en\",\n    \"notes\": \"Compra en lote - actualizado\",\n    \"grade\": \"10\",\n    \"purchasePrice\": 52000.00,\n    \"createdAt\": \"2026-06-30T10:00:00.000Z\",\n    \"updatedAt\": \"2026-06-30T12:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Actualizar solo cantidad",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/cards/{{entryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "cards", "{{entryId}}"]
+            },
+            "description": "Ejemplo de actualización parcial: solo modifica la cantidad."
+          }
+        },
+        {
+          "name": "Eliminar carta de colección",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/cards/{{entryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "cards", "{{entryId}}"]
+            },
+            "description": "Elimina un registro de la colección. Responde 200 si se eliminó correctamente."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Stats",
+      "item": [
+        {
+          "name": "Estadísticas de colección",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/{{userId}}/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "{{userId}}", "stats"]
+            },
+            "description": "Obtiene estadísticas agregadas de la colección del usuario: total de entradas, cartas únicas, cantidad total, y desglose por rarity, condition y edition."
+          },
+          "response": [
+            {
+              "name": "Ejemplo de respuesta",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"data\": {\n    \"totalEntries\": 42,\n    \"uniqueCardIds\": 30,\n    \"totalQuantity\": 87,\n    \"byRarity\": {\n      \"COMMON\": 10,\n      \"RARE\": 8,\n      \"SUPER_RARE\": 6,\n      \"ULTRA_RARE\": 5,\n      \"SECRET_RARE\": 3,\n      \"PRISMATIC_SECRET_RARE\": 2,\n      \"STARLIGHT_RARE\": 1,\n      \"COLLECTORS_RARE\": 1\n    },\n    \"byCondition\": {\n      \"MINT\": 15,\n      \"NEAR_MINT\": 12,\n      \"LIGHTLY_PLAYED\": 8,\n      \"PLAYED\": 5,\n      \"DAMAGED\": 2\n    },\n    \"byEdition\": {\n      \"FIRST_EDITION\": 25,\n      \"UNLIMITED\": 17\n    },\n    \"lastUpdated\": \"2026-06-30T12:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Errores (ejemplos)",
+      "item": [
+        {
+          "name": "400 - Parámetros inválidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/{{userId}}/cards?limit=500&condition=INVALIDO&sort=invalidField",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "{{userId}}", "cards"],
+              "query": [
+                { "key": "limit", "value": "500", "description": "Máximo 100" },
+                { "key": "condition", "value": "INVALIDO", "description": "No es un valor válido del enum" },
+                { "key": "sort", "value": "invalidField", "description": "No está en la whitelist" }
+              ]
+            },
+            "description": "Ejemplo de request con errores de validación: limit > 100, condition inválido, sort field inválido. Responde 400 Bad Request."
+          },
+          "response": [
+            {
+              "name": "400 Bad Request",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"message\": [\n    \"limit must not be greater than 100\",\n    \"condition must be a valid enum value\",\n    \"sort must be one of the following values: createdAt, updatedAt, cardId, quantity, condition, rarity, edition, purchasePrice\"\n  ],\n  \"error\": \"Bad Request\",\n  \"statusCode\": 400\n}"
+            }
+          ]
+        },
+        {
+          "name": "404 - Carta no encontrada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/cards/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "cards", "00000000-0000-0000-0000-000000000000"]
+            },
+            "description": "Intento de obtener una carta con un UUID que no existe. Responde 404 Not Found."
+          },
+          "response": [
+            {
+              "name": "404 Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"message\": \"Collection entry not found\",\n  \"error\": \"Not Found\",\n  \"statusCode\": 404\n}"
+            }
+          ]
+        },
+        {
+          "name": "400 - Query params desconocidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/collections/{{userId}}/cards?unknownParam=abc",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "collections", "{{userId}}", "cards"],
+              "query": [
+                { "key": "unknownParam", "value": "abc", "description": "Parámetro no whitelisted" }
+              ]
+            },
+            "description": "Envío de un query parameter no reconocido. El ValidationPipe con forbidNonWhitelisted rechaza la request. Responde 400."
+          },
+          "response": [
+            {
+              "name": "400 Bad Request",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"message\": [\n    \"property unknownParam should not exist\"\n  ],\n  \"error\": \"Bad Request\",\n  \"statusCode\": 400\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
