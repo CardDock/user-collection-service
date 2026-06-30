@@ -96,9 +96,7 @@
           "name": "Agregar carta a colección",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"cardId\": 456,\n  \"condition\": \"NEAR_MINT\",\n  \"rarity\": \"SECRET_RARE\",\n  \"edition\": \"FIRST_EDITION\",\n  \"isFoil\": true,\n  \"language\": \"en\",\n  \"quantity\": 1,\n  \"notes\": \"Abrir sobres edición limitada\",\n  \"grade\": \"9.5\",\n  \"purchasePrice\": 45000.00\n}"
@@ -144,9 +142,7 @@
           "name": "Actualizar carta (PATCH)",
           "request": {
             "method": "PATCH",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"quantity\": 5,\n  \"notes\": \"Compra en lote - actualizado\",\n  \"grade\": \"10\",\n  \"purchasePrice\": 52000.00\n}"
@@ -174,9 +170,7 @@
           "name": "Actualizar solo cantidad",
           "request": {
             "method": "PATCH",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"quantity\": 10\n}"
@@ -247,8 +241,16 @@
               "path": ["{{apiPrefix}}", "collections", "{{userId}}", "cards"],
               "query": [
                 { "key": "limit", "value": "500", "description": "Máximo 100" },
-                { "key": "condition", "value": "INVALIDO", "description": "No es un valor válido del enum" },
-                { "key": "sort", "value": "invalidField", "description": "No está en la whitelist" }
+                {
+                  "key": "condition",
+                  "value": "INVALIDO",
+                  "description": "No es un valor válido del enum"
+                },
+                {
+                  "key": "sort",
+                  "value": "invalidField",
+                  "description": "No está en la whitelist"
+                }
               ]
             },
             "description": "Ejemplo de request con errores de validación: limit > 100, condition inválido, sort field inválido. Responde 400 Bad Request."
@@ -273,7 +275,12 @@
             "url": {
               "raw": "{{baseUrl}}/{{apiPrefix}}/collections/cards/00000000-0000-0000-0000-000000000000",
               "host": ["{{baseUrl}}"],
-              "path": ["{{apiPrefix}}", "collections", "cards", "00000000-0000-0000-0000-000000000000"]
+              "path": [
+                "{{apiPrefix}}",
+                "collections",
+                "cards",
+                "00000000-0000-0000-0000-000000000000"
+              ]
             },
             "description": "Intento de obtener una carta con un UUID que no existe. Responde 404 Not Found."
           },
@@ -299,7 +306,11 @@
               "host": ["{{baseUrl}}"],
               "path": ["{{apiPrefix}}", "collections", "{{userId}}", "cards"],
               "query": [
-                { "key": "unknownParam", "value": "abc", "description": "Parámetro no whitelisted" }
+                {
+                  "key": "unknownParam",
+                  "value": "abc",
+                  "description": "Parámetro no whitelisted"
+                }
               ]
             },
             "description": "Envío de un query parameter no reconocido. El ValidationPipe con forbidNonWhitelisted rechaza la request. Responde 400."
