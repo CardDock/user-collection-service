@@ -1,14 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { createMock } from '@golevelup/ts-jest';
 import { PrismaCollectionRepository } from '../../../../../src/collection/infrastructure/persistence/prisma-collection.repository';
 import { PrismaService } from '../../../../../src/prisma/prisma.service';
 
 describe('PrismaCollectionRepository', () => {
   let repository: PrismaCollectionRepository;
-  let mockPrisma: jest.Mocked<PrismaService>;
+  let mockPrisma: Record<string, any>;
+
+  function createMockPrisma(): Record<string, any> {
+    return {
+      userCollection: {
+        findMany: jest.fn(),
+        count: jest.fn(),
+        findFirst: jest.fn(),
+        findUnique: jest.fn(),
+        create: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+        aggregate: jest.fn(),
+        groupBy: jest.fn(),
+      },
+      onModuleInit: jest.fn(),
+      onModuleDestroy: jest.fn(),
+      $connect: jest.fn(),
+      $disconnect: jest.fn(),
+    };
+  }
 
   beforeEach(async () => {
-    mockPrisma = createMock<PrismaService>();
+    mockPrisma = createMockPrisma();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -25,7 +44,7 @@ describe('PrismaCollectionRepository', () => {
 
   it('should map Prisma rows to domain entities on findMany', async () => {
     const now = new Date();
-    const mockFindMany = mockPrisma.userCollection.findMany as jest.Mock;
+    const mockFindMany = mockPrisma.userCollection.findMany;
     mockFindMany.mockResolvedValue([
       {
         id: 'c1',
@@ -60,7 +79,7 @@ describe('PrismaCollectionRepository', () => {
   });
 
   it('should call count with the correct where clause', async () => {
-    const mockCount = mockPrisma.userCollection.count as jest.Mock;
+    const mockCount = mockPrisma.userCollection.count;
     mockCount.mockResolvedValue(42);
 
     const result = await repository.count({ userId: 'u1' });
@@ -72,7 +91,7 @@ describe('PrismaCollectionRepository', () => {
   });
 
   it('should return null when findFirst finds nothing', async () => {
-    const mockFindFirst = mockPrisma.userCollection.findFirst as jest.Mock;
+    const mockFindFirst = mockPrisma.userCollection.findFirst;
     mockFindFirst.mockResolvedValue(null);
 
     const result = await repository.findFirst({
