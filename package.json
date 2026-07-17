@@ -86,7 +86,9 @@
       "src/**/*.(t|j)s",
       "!src/**/generated/**",
       "!src/main.ts",
-      "!src/app/app.module.ts"
+      "!src/**/*.port.ts",
+      "!src/**/*.dto.ts",
+      "!src/**/*.module.ts"
     ],
     "coverageDirectory": "./coverage",
     "coveragePathIgnorePatterns": [
