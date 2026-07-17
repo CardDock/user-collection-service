@@ -15,6 +15,8 @@ import {
   CardRarity,
   CardEdition,
 } from '../../../../../src/collection/domain/enums';
+import { CreateCollectionDto } from '../../../../../src/collection/infrastructure/http/dto/create-collection.dto';
+import { UpdateCollectionDto } from '../../../../../src/collection/infrastructure/http/dto/update-collection.dto';
 
 describe('CollectionController', () => {
   let controller: CollectionController;
@@ -127,6 +129,78 @@ describe('CollectionController', () => {
       await expect(controller.findOne('nonexistent')).rejects.toThrow(
         'Collection entry not found',
       );
+    });
+  });
+
+  describe('addCard', () => {
+    it('should call use case and return created card', async () => {
+      const entity = new UserCollectionEntity(
+        'c1', 'user-1', 123, CardCondition.MINT, CardRarity.ULTRA_RARE,
+        CardEdition.FIRST_EDITION, 2, true, 'en', null, null, null,
+        new Date(), new Date(),
+      );
+      const dto = new CreateCollectionDto();
+      Object.assign(dto, {
+        cardId: 123, condition: CardCondition.MINT, rarity: CardRarity.ULTRA_RARE,
+        edition: CardEdition.FIRST_EDITION, isFoil: true, language: 'en', quantity: 2,
+      });
+
+      mockManageUseCase.addCard.mockResolvedValue(entity);
+
+      const result = await controller.addCard('user-1', dto);
+
+      expect(mockManageUseCase.addCard).toHaveBeenCalledWith('user-1', dto);
+      expect(result).toEqual({ data: entity });
+    });
+  });
+
+  describe('updateCard', () => {
+    it('should call use case and return updated card', async () => {
+      const entity = new UserCollectionEntity(
+        'c1', 'user-1', 123, CardCondition.MINT, CardRarity.ULTRA_RARE,
+        CardEdition.FIRST_EDITION, 5, true, 'en', 'updated notes', null, null,
+        new Date(), new Date(),
+      );
+      const dto = new UpdateCollectionDto();
+      Object.assign(dto, { quantity: 5, notes: 'updated notes' });
+
+      mockManageUseCase.updateCard.mockResolvedValue(entity);
+
+      const result = await controller.updateCard('c1', dto);
+
+      expect(mockManageUseCase.updateCard).toHaveBeenCalledWith('c1', dto);
+      expect(result).toEqual({ data: entity });
+    });
+  });
+
+  describe('removeCard', () => {
+    it('should call use case and return nothing', async () => {
+      mockManageUseCase.removeCard.mockResolvedValue(undefined);
+
+      const result = await controller.removeCard('c1');
+
+      expect(mockManageUseCase.removeCard).toHaveBeenCalledWith('c1');
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('getStats', () => {
+    it('should call use case and return stats', async () => {
+      const stats = {
+        totalEntries: 10,
+        uniqueCardIds: 5,
+        totalQuantity: 25,
+        byRarity: { ULTRA_RARE: 3 },
+        byCondition: { MINT: 4 },
+        byEdition: { FIRST_EDITION: 3 },
+        lastUpdated: new Date(),
+      };
+      mockManageUseCase.getStats.mockResolvedValue(stats);
+
+      const result = await controller.getStats('user-1');
+
+      expect(mockManageUseCase.getStats).toHaveBeenCalledWith('user-1');
+      expect(result).toEqual({ data: stats });
     });
   });
 });
