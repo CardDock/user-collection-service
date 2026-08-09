@@ -18,11 +18,12 @@ export interface ManageCollectionUseCase {
   ): Promise<UserCollectionEntity>;
 
   updateCard(
+    userId: string,
     id: string,
     dto: UpdateCollectionDto,
   ): Promise<UserCollectionEntity>;
 
-  removeCard(id: string): Promise<void>;
+  removeCard(userId: string, id: string): Promise<void>;
 
   getStats(userId: string): Promise<CollectionStats>;
 }
@@ -34,72 +35,50 @@ export class ManageCollectionService implements ManageCollectionUseCase {
     userId: string,
     dto: CreateCollectionDto,
   ): Promise<UserCollectionEntity> {
-    const existing = await this.repository.findByUnique({
-      userId,
-      cardId: dto.cardId,
-      condition: dto.condition,
-      rarity: dto.rarity,
-      edition: dto.edition,
-      isFoil: dto.isFoil,
-      language: dto.language,
-    });
-
-    if (existing) {
-      const newQuantity = existing.quantity + (dto.quantity ?? 1);
-      const updated = await this.repository.update(existing.id, {
-        quantity: newQuantity,
-      });
-
-      if (!updated) {
-        throw new NotFoundException('Collection entry not found');
-      }
-
-      return updated;
-    }
-
     const input: CreateCollectionInput = {
       userId,
       cardId: dto.cardId,
+      setId: dto.setId,
       condition: dto.condition,
       rarity: dto.rarity,
-      edition: dto.edition,
-      isFoil: dto.isFoil,
       language: dto.language,
       quantity: dto.quantity ?? 1,
       notes: dto.notes ?? null,
-      grade: dto.grade ?? null,
-      purchasePrice: dto.purchasePrice ?? null,
     };
 
     return this.repository.create(input);
   }
 
   async updateCard(
+    userId: string,
     id: string,
     dto: UpdateCollectionDto,
   ): Promise<UserCollectionEntity> {
-    const input: UpdateCollectionInput = {};
-    if (dto.quantity !== undefined) input.quantity = dto.quantity;
-    if (dto.notes !== undefined) input.notes = dto.notes;
-    if (dto.grade !== undefined) input.grade = dto.grade;
-    if (dto.purchasePrice !== undefined)
-      input.purchasePrice = dto.purchasePrice;
+    const entry = await this.repository.findFirst({ id, userId });
 
-    const updated = await this.repository.update(id, input);
-
-    if (!updated) {
+    if (!entry) {
       throw new NotFoundException('Collection entry not found');
     }
 
-    return updated;
+    const input: UpdateCollectionInput = {};
+    if (dto.condition !== undefined) input.condition = dto.condition;
+    if (dto.rarity !== undefined) input.rarity = dto.rarity;
+    if (dto.language !== undefined) input.language = dto.language;
+    if (dto.quantity !== undefined) input.quantity = dto.quantity;
+    if (dto.setId !== undefined) input.setId = dto.setId;
+    if (dto.notes !== undefined) input.notes = dto.notes;
+
+    return this.repository.update(id, input) as Promise<UserCollectionEntity>;
   }
 
-  async removeCard(id: string): Promise<void> {
-    const deleted = await this.repository.delete(id);
+  async removeCard(userId: string, id: string): Promise<void> {
+    const entry = await this.repository.findFirst({ id, userId });
 
-    if (!deleted) {
+    if (!entry) {
       throw new NotFoundException('Collection entry not found');
     }
+
+    await this.repository.delete(id);
   }
 
   async getStats(userId: string): Promise<CollectionStats> {

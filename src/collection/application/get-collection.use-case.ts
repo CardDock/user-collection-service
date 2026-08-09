@@ -4,15 +4,14 @@ import type {
 } from '../domain/collection-repository.port';
 import { PaginatedResult } from '../domain/pagination';
 import { UserCollectionEntity } from '../domain/user-collection.entity';
-import { CardCondition, CardRarity, CardEdition } from '../domain/enums';
+import { CardCondition, CardRarity } from '../domain/enums';
 
 export interface CollectionQuery {
   page: number;
   limit: number;
   condition?: CardCondition;
   rarity?: CardRarity;
-  edition?: CardEdition;
-  isFoil?: boolean;
+  cardId?: number;
   sort: string;
   order: 'asc' | 'desc';
 }
@@ -40,8 +39,7 @@ export class GetCollectionService implements GetCollectionUseCase {
       limit = 20,
       condition,
       rarity,
-      edition,
-      isFoil,
+      cardId,
       sort = 'createdAt',
       order = 'desc',
     } = query;
@@ -50,8 +48,7 @@ export class GetCollectionService implements GetCollectionUseCase {
 
     if (condition) where.condition = condition;
     if (rarity) where.rarity = rarity;
-    if (edition) where.edition = edition;
-    if (isFoil !== undefined) where.isFoil = isFoil;
+    if (cardId !== undefined) where.cardId = cardId;
 
     const skip = (page - 1) * limit;
 

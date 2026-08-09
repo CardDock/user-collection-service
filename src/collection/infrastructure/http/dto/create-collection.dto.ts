@@ -1,29 +1,18 @@
-import {
-  IsInt,
-  IsEnum,
-  IsBoolean,
-  IsString,
-  IsOptional,
-  Min,
-  IsNumber,
-} from 'class-validator';
-import { CardCondition, CardRarity, CardEdition } from '../../../domain/enums';
+import { IsInt, IsEnum, IsString, IsOptional, Min } from 'class-validator';
+import { CardCondition, CardRarity } from '../../../domain/enums';
 
 export class CreateCollectionDto {
   @IsInt()
   cardId: number;
+
+  @IsString()
+  setId: string;
 
   @IsEnum(CardCondition)
   condition: CardCondition;
 
   @IsEnum(CardRarity)
   rarity: CardRarity;
-
-  @IsEnum(CardEdition)
-  edition: CardEdition;
-
-  @IsBoolean()
-  isFoil: boolean;
 
   @IsString()
   language: string;
@@ -36,12 +25,4 @@ export class CreateCollectionDto {
   @IsOptional()
   @IsString()
   notes?: string;
-
-  @IsOptional()
-  @IsString()
-  grade?: string;
-
-  @IsOptional()
-  @IsNumber()
-  purchasePrice?: number;
 }

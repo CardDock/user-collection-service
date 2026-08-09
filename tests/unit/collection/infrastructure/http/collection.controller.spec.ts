@@ -13,7 +13,6 @@ import { UserCollectionEntity } from '../../../../../src/collection/domain/user-
 import {
   CardCondition,
   CardRarity,
-  CardEdition,
 } from '../../../../../src/collection/domain/enums';
 import { CreateCollectionDto } from '../../../../../src/collection/infrastructure/http/dto/create-collection.dto';
 import { UpdateCollectionDto } from '../../../../../src/collection/infrastructure/http/dto/update-collection.dto';
@@ -59,8 +58,7 @@ describe('CollectionController', () => {
         limit: 20,
         condition: undefined,
         rarity: undefined,
-        edition: undefined,
-        isFoil: undefined,
+        cardId: undefined,
         sort: 'createdAt',
         order: 'desc',
       });
@@ -78,8 +76,7 @@ describe('CollectionController', () => {
         limit: 10,
         condition: 'MINT',
         rarity: 'ULTRA_RARE',
-        edition: 'FIRST_EDITION',
-        isFoil: true,
+        cardId: 4031928,
         sort: 'cardId',
         order: 'asc',
       } as any);
@@ -89,8 +86,7 @@ describe('CollectionController', () => {
         limit: 10,
         condition: 'MINT',
         rarity: 'ULTRA_RARE',
-        edition: 'FIRST_EDITION',
-        isFoil: true,
+        cardId: 4031928,
         sort: 'cardId',
         order: 'asc',
       });
@@ -103,14 +99,11 @@ describe('CollectionController', () => {
         'c1',
         'user-1',
         123,
+        'LOB',
         CardCondition.MINT,
         CardRarity.ULTRA_RARE,
-        CardEdition.FIRST_EDITION,
         1,
-        false,
         'en',
-        null,
-        null,
         null,
         new Date(),
         new Date(),
@@ -135,14 +128,13 @@ describe('CollectionController', () => {
   describe('addCard', () => {
     it('should call use case and return created card', async () => {
       const entity = new UserCollectionEntity(
-        'c1', 'user-1', 123, CardCondition.MINT, CardRarity.ULTRA_RARE,
-        CardEdition.FIRST_EDITION, 2, true, 'en', null, null, null,
-        new Date(), new Date(),
+        'c1', 'user-1', 123, 'LOB', CardCondition.MINT, CardRarity.ULTRA_RARE,
+        2, 'en', null, new Date(), new Date(),
       );
       const dto = new CreateCollectionDto();
       Object.assign(dto, {
-        cardId: 123, condition: CardCondition.MINT, rarity: CardRarity.ULTRA_RARE,
-        edition: CardEdition.FIRST_EDITION, isFoil: true, language: 'en', quantity: 2,
+        cardId: 123, setId: 'LOB', condition: CardCondition.MINT,
+        rarity: CardRarity.ULTRA_RARE, language: 'en', quantity: 2,
       });
 
       mockManageUseCase.addCard.mockResolvedValue(entity);
@@ -155,31 +147,30 @@ describe('CollectionController', () => {
   });
 
   describe('updateCard', () => {
-    it('should call use case and return updated card', async () => {
+    it('should call use case with userId and id and return updated card', async () => {
       const entity = new UserCollectionEntity(
-        'c1', 'user-1', 123, CardCondition.MINT, CardRarity.ULTRA_RARE,
-        CardEdition.FIRST_EDITION, 5, true, 'en', 'updated notes', null, null,
-        new Date(), new Date(),
+        'c1', 'user-1', 123, 'LOB', CardCondition.MINT, CardRarity.ULTRA_RARE,
+        5, 'en', 'updated notes', new Date(), new Date(),
       );
       const dto = new UpdateCollectionDto();
       Object.assign(dto, { quantity: 5, notes: 'updated notes' });
 
       mockManageUseCase.updateCard.mockResolvedValue(entity);
 
-      const result = await controller.updateCard('c1', dto);
+      const result = await controller.updateCard('user-1', 'c1', dto);
 
-      expect(mockManageUseCase.updateCard).toHaveBeenCalledWith('c1', dto);
+      expect(mockManageUseCase.updateCard).toHaveBeenCalledWith('user-1', 'c1', dto);
       expect(result).toEqual({ data: entity });
     });
   });
 
   describe('removeCard', () => {
-    it('should call use case and return nothing', async () => {
+    it('should call use case with userId and id and return nothing', async () => {
       mockManageUseCase.removeCard.mockResolvedValue(undefined);
 
-      const result = await controller.removeCard('c1');
+      const result = await controller.removeCard('user-1', 'c1');
 
-      expect(mockManageUseCase.removeCard).toHaveBeenCalledWith('c1');
+      expect(mockManageUseCase.removeCard).toHaveBeenCalledWith('user-1', 'c1');
       expect(result).toBeUndefined();
     });
   });
@@ -192,7 +183,6 @@ describe('CollectionController', () => {
         totalQuantity: 25,
         byRarity: { ULTRA_RARE: 3 },
         byCondition: { MINT: 4 },
-        byEdition: { FIRST_EDITION: 3 },
         lastUpdated: new Date(),
       };
       mockManageUseCase.getStats.mockResolvedValue(stats);

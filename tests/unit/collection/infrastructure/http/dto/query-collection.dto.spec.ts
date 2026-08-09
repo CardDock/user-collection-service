@@ -18,8 +18,7 @@ describe('QueryCollectionDto', () => {
       limit: 10,
       condition: 'MINT',
       rarity: 'ULTRA_RARE',
-      edition: 'FIRST_EDITION',
-      isFoil: 'true',
+      cardId: 4031928,
       sort: 'cardId',
       order: 'asc',
     });
@@ -30,8 +29,7 @@ describe('QueryCollectionDto', () => {
     expect(dto.limit).toBe(10);
     expect(dto.condition).toBe('MINT');
     expect(dto.rarity).toBe('ULTRA_RARE');
-    expect(dto.edition).toBe('FIRST_EDITION');
-    expect(dto.isFoil).toBe(true);
+    expect(dto.cardId).toBe(4031928);
     expect(dto.sort).toBe('cardId');
     expect(dto.order).toBe('asc');
   });
@@ -40,7 +38,6 @@ describe('QueryCollectionDto', () => {
     const dto = plainToInstance(QueryCollectionDto, {
       condition: 'INVALID_CONDITION',
       rarity: 'INVALID_RARITY',
-      edition: 'INVALID_EDITION',
     });
 
     const errors = await validate(dto);
@@ -48,7 +45,6 @@ describe('QueryCollectionDto', () => {
     const fieldNames = errors.map((e) => e.property);
     expect(fieldNames).toContain('condition');
     expect(fieldNames).toContain('rarity');
-    expect(fieldNames).toContain('edition');
   });
 
   it('should reject limit exceeding max value', async () => {
@@ -83,11 +79,10 @@ describe('QueryCollectionDto', () => {
     expect(errors[0].property).toBe('order');
   });
 
-  it('should transform isFoil string to boolean', () => {
-    const dto = plainToInstance(QueryCollectionDto, { isFoil: 'true' });
-    expect(dto.isFoil).toBe(true);
-
-    const dto2 = plainToInstance(QueryCollectionDto, { isFoil: 'false' });
-    expect(dto2.isFoil).toBe(false);
+  it('should reject cardId that is not a positive integer', async () => {
+    const dto = plainToInstance(QueryCollectionDto, { cardId: 'abc' });
+    const errors = await validate(dto);
+    expect(errors).toHaveLength(1);
+    expect(errors[0].property).toBe('cardId');
   });
 });

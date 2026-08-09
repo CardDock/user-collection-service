@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
   Delete,
   Param,
   Query,
@@ -40,8 +40,7 @@ export class CollectionController {
       limit: query.limit ?? 20,
       condition: query.condition,
       rarity: query.rarity,
-      edition: query.edition,
-      isFoil: query.isFoil,
+      cardId: query.cardId,
       sort: query.sort ?? 'createdAt',
       order: query.order ?? 'desc',
     });
@@ -67,18 +66,22 @@ export class CollectionController {
     return { data: result };
   }
 
-  @Patch('cards/:id')
+  @Put(':userId/cards/:id')
   async updateCard(
+    @Param('userId') userId: string,
     @Param('id') id: string,
     @Body() dto: UpdateCollectionDto,
   ): Promise<{ data: UserCollectionEntity }> {
-    const result = await this.manageCollection.updateCard(id, dto);
+    const result = await this.manageCollection.updateCard(userId, id, dto);
     return { data: result };
   }
 
-  @Delete('cards/:id')
-  async removeCard(@Param('id') id: string): Promise<void> {
-    await this.manageCollection.removeCard(id);
+  @Delete(':userId/cards/:id')
+  async removeCard(
+    @Param('userId') userId: string,
+    @Param('id') id: string,
+  ): Promise<void> {
+    await this.manageCollection.removeCard(userId, id);
   }
 
   @Get(':userId/stats')

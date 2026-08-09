@@ -10,7 +10,7 @@ import {
   CollectionStats,
 } from '../../domain/collection-repository.port';
 import { UserCollectionEntity } from '../../domain/user-collection.entity';
-import { CardCondition, CardRarity, CardEdition } from '../../domain/enums';
+import { CardCondition, CardRarity } from '../../domain/enums';
 
 @Injectable()
 export class PrismaCollectionRepository implements CollectionRepositoryPort {
@@ -54,15 +54,12 @@ export class PrismaCollectionRepository implements CollectionRepositoryPort {
       data: {
         userId: input.userId,
         cardId: input.cardId,
+        setId: input.setId,
         condition: input.condition,
         rarity: input.rarity,
-        edition: input.edition,
         quantity: input.quantity,
-        isFoil: input.isFoil,
         language: input.language,
         notes: input.notes ?? null,
-        grade: input.grade ?? null,
-        purchasePrice: input.purchasePrice ?? null,
       },
     });
 
@@ -82,12 +79,12 @@ export class PrismaCollectionRepository implements CollectionRepositoryPort {
     const row = await this.prisma.userCollection.update({
       where: { id },
       data: {
+        ...(input.condition !== undefined && { condition: input.condition }),
+        ...(input.rarity !== undefined && { rarity: input.rarity }),
+        ...(input.language !== undefined && { language: input.language }),
         ...(input.quantity !== undefined && { quantity: input.quantity }),
+        ...(input.setId !== undefined && { setId: input.setId }),
         ...(input.notes !== undefined && { notes: input.notes }),
-        ...(input.grade !== undefined && { grade: input.grade }),
-        ...(input.purchasePrice !== undefined && {
-          purchasePrice: input.purchasePrice,
-        }),
       },
     });
 
@@ -113,10 +110,9 @@ export class PrismaCollectionRepository implements CollectionRepositoryPort {
       where: {
         userId: input.userId,
         cardId: input.cardId,
+        setId: input.setId,
         condition: input.condition,
         rarity: input.rarity,
-        edition: input.edition,
-        isFoil: input.isFoil,
         language: input.language,
       },
     });
@@ -132,7 +128,6 @@ export class PrismaCollectionRepository implements CollectionRepositoryPort {
       quantityAgg,
       byRarity,
       byCondition,
-      byEdition,
       lastUpdatedAgg,
     ] = await Promise.all([
       this.prisma.userCollection.count({ where: { userId } }),
@@ -155,11 +150,6 @@ export class PrismaCollectionRepository implements CollectionRepositoryPort {
         where: { userId },
         _count: true,
       }),
-      this.prisma.userCollection.groupBy({
-        by: ['edition'],
-        where: { userId },
-        _count: true,
-      }),
       this.prisma.userCollection.aggregate({
         where: { userId },
         _max: { updatedAt: true },
@@ -174,9 +164,6 @@ export class PrismaCollectionRepository implements CollectionRepositoryPort {
       byCondition: Object.fromEntries(
         byCondition.map((c) => [c.condition, c._count]),
       ),
-      byEdition: Object.fromEntries(
-        byEdition.map((e) => [e.edition, e._count]),
-      ),
       lastUpdated: lastUpdatedAgg._max.updatedAt ?? new Date(),
     };
   }
@@ -186,15 +173,12 @@ interface PrismaUserCollectionRow {
   id: string;
   userId: string;
   cardId: number;
+  setId: string;
   condition: string;
   rarity: string;
-  edition: string;
   quantity: number;
-  isFoil: boolean;
   language: string;
   notes: string | null;
-  grade: string | null;
-  purchasePrice: unknown;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -204,15 +188,12 @@ function toEntity(row: PrismaUserCollectionRow): UserCollectionEntity {
     row.id,
     row.userId,
     row.cardId,
+    row.setId,
     row.condition as CardCondition,
     row.rarity as CardRarity,
-    row.edition as CardEdition,
     row.quantity,
-    row.isFoil,
     row.language,
     row.notes,
-    row.grade,
-    row.purchasePrice ? Number(row.purchasePrice) : null,
     row.createdAt,
     row.updatedAt,
   );

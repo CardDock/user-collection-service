@@ -1,14 +1,6 @@
-import {
-  IsOptional,
-  IsInt,
-  Min,
-  Max,
-  IsEnum,
-  IsBoolean,
-  IsIn,
-} from 'class-validator';
-import { Type, Transform } from 'class-transformer';
-import { CardCondition, CardRarity, CardEdition } from '../../../domain/enums';
+import { IsOptional, IsInt, Min, Max, IsEnum, IsIn } from 'class-validator';
+import { Type } from 'class-transformer';
+import { CardCondition, CardRarity } from '../../../domain/enums';
 
 const SORT_FIELDS = [
   'createdAt',
@@ -17,8 +9,6 @@ const SORT_FIELDS = [
   'quantity',
   'condition',
   'rarity',
-  'edition',
-  'purchasePrice',
 ] as const;
 
 export class QueryCollectionDto {
@@ -44,13 +34,10 @@ export class QueryCollectionDto {
   rarity?: CardRarity;
 
   @IsOptional()
-  @IsEnum(CardEdition)
-  edition?: CardEdition;
-
-  @IsOptional()
-  @IsBoolean()
-  @Transform(({ value }) => value === 'true')
-  isFoil?: boolean;
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  cardId?: number;
 
   @IsOptional()
   @IsIn(SORT_FIELDS)

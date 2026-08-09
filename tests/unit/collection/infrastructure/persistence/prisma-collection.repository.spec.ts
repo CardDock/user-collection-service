@@ -4,7 +4,6 @@ import { PrismaService } from '../../../../../src/prisma/prisma.service';
 import {
   CardCondition,
   CardRarity,
-  CardEdition,
 } from '../../../../../src/collection/domain/enums';
 
 describe('PrismaCollectionRepository', () => {
@@ -55,15 +54,12 @@ describe('PrismaCollectionRepository', () => {
         id: 'c1',
         userId: 'u1',
         cardId: 123,
+        setId: 'LOB',
         condition: 'MINT',
         rarity: 'ULTRA_RARE',
-        edition: 'FIRST_EDITION',
         quantity: 2,
-        isFoil: true,
         language: 'en',
         notes: null,
-        grade: null,
-        purchasePrice: null,
         createdAt: now,
         updatedAt: now,
       },
@@ -80,7 +76,7 @@ describe('PrismaCollectionRepository', () => {
     expect(result[0]).toBeInstanceOf(Object);
     expect(result[0].id).toBe('c1');
     expect(result[0].cardId).toBe(123);
-    expect(result[0].purchasePrice).toBeNull();
+    expect(result[0].setId).toBe('LOB');
   });
 
   it('should call count with the correct where clause', async () => {
@@ -111,10 +107,9 @@ describe('PrismaCollectionRepository', () => {
     it('should return an entity when found', async () => {
       const now = new Date();
       mockPrisma.userCollection.findFirst.mockResolvedValue({
-        id: 'c1', userId: 'u1', cardId: 123, condition: 'MINT',
-        rarity: 'ULTRA_RARE', edition: 'FIRST_EDITION', quantity: 2,
-        isFoil: true, language: 'en', notes: null, grade: null,
-        purchasePrice: null, createdAt: now, updatedAt: now,
+        id: 'c1', userId: 'u1', cardId: 123, setId: 'LOB',
+        condition: 'MINT', rarity: 'ULTRA_RARE', quantity: 2,
+        language: 'en', notes: null, createdAt: now, updatedAt: now,
       });
 
       const result = await repository.findFirst({ id: 'c1' });
@@ -128,45 +123,43 @@ describe('PrismaCollectionRepository', () => {
     it('should create and return a mapped entity', async () => {
       const now = new Date();
       mockPrisma.userCollection.create.mockResolvedValue({
-        id: 'new-1', userId: 'u1', cardId: 999, condition: 'MINT',
-        rarity: 'RARE', edition: 'UNLIMITED', quantity: 1,
-        isFoil: false, language: 'en', notes: 'test note', grade: '9',
-        purchasePrice: 25.5, createdAt: now, updatedAt: now,
+        id: 'new-1', userId: 'u1', cardId: 999, setId: 'LOB',
+        condition: 'MINT', rarity: 'RARE', quantity: 1,
+        language: 'en', notes: 'test note', createdAt: now, updatedAt: now,
       });
 
       const result = await repository.create({
-        userId: 'u1', cardId: 999, condition: CardCondition.MINT,
-        rarity: CardRarity.RARE, edition: CardEdition.UNLIMITED,
-        quantity: 1, isFoil: false, language: 'en',
-        notes: 'test note', grade: '9', purchasePrice: 25.5,
+        userId: 'u1', cardId: 999, setId: 'LOB', condition: CardCondition.MINT,
+        rarity: CardRarity.RARE, quantity: 1, language: 'en',
+        notes: 'test note',
       });
 
       expect(mockPrisma.userCollection.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          userId: 'u1', cardId: 999, quantity: 1, purchasePrice: 25.5,
+          userId: 'u1', cardId: 999, setId: 'LOB', quantity: 1,
         }),
       });
       expect(result).toBeInstanceOf(Object);
       expect(result.id).toBe('new-1');
     });
 
-    it('should map purchasePrice as number when present', async () => {
+    it('should default notes to null when not provided', async () => {
       const now = new Date();
       mockPrisma.userCollection.create.mockResolvedValue({
-        id: 'c1', userId: 'u1', cardId: 1, condition: 'MINT',
-        rarity: 'COMMON', edition: 'UNLIMITED', quantity: 1,
-        isFoil: false, language: 'en', notes: null, grade: null,
-        purchasePrice: 15.99, createdAt: now, updatedAt: now,
+        id: 'c1', userId: 'u1', cardId: 1, setId: 'SDY',
+        condition: 'MINT', rarity: 'COMMON', quantity: 1,
+        language: 'en', notes: null, createdAt: now, updatedAt: now,
       });
 
       const result = await repository.create({
-        userId: 'u1', cardId: 1, condition: CardCondition.MINT,
-        rarity: CardRarity.COMMON, edition: CardEdition.UNLIMITED,
-        quantity: 1, isFoil: false, language: 'en',
-        purchasePrice: 15.99,
+        userId: 'u1', cardId: 1, setId: 'SDY', condition: CardCondition.MINT,
+        rarity: CardRarity.COMMON, quantity: 1, language: 'en',
       });
 
-      expect(result.purchasePrice).toBe(15.99);
+      expect(mockPrisma.userCollection.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({ notes: null }),
+      });
+      expect(result).not.toBeNull();
     });
   });
 
@@ -174,16 +167,14 @@ describe('PrismaCollectionRepository', () => {
     it('should update and return entity when found', async () => {
       const now = new Date();
       mockPrisma.userCollection.findUnique.mockResolvedValue({
-        id: 'c1', userId: 'u1', cardId: 1, condition: 'MINT',
-        rarity: 'COMMON', edition: 'UNLIMITED', quantity: 1,
-        isFoil: false, language: 'en', notes: null, grade: null,
-        purchasePrice: null, createdAt: now, updatedAt: now,
+        id: 'c1', userId: 'u1', cardId: 1, setId: 'LOB',
+        condition: 'MINT', rarity: 'COMMON', quantity: 1,
+        language: 'en', notes: null, createdAt: now, updatedAt: now,
       });
       mockPrisma.userCollection.update.mockResolvedValue({
-        id: 'c1', userId: 'u1', cardId: 1, condition: 'MINT',
-        rarity: 'COMMON', edition: 'UNLIMITED', quantity: 5,
-        isFoil: false, language: 'en', notes: 'updated', grade: null,
-        purchasePrice: null, createdAt: now, updatedAt: now,
+        id: 'c1', userId: 'u1', cardId: 1, setId: 'LOB',
+        condition: 'MINT', rarity: 'COMMON', quantity: 5,
+        language: 'en', notes: 'updated', createdAt: now, updatedAt: now,
       });
 
       const result = await repository.update('c1', { quantity: 5, notes: 'updated' });
@@ -211,10 +202,9 @@ describe('PrismaCollectionRepository', () => {
     it('should delete and return the deleted entity when found', async () => {
       const now = new Date();
       const existingRow = {
-        id: 'c1', userId: 'u1', cardId: 1, condition: 'MINT',
-        rarity: 'COMMON', edition: 'UNLIMITED', quantity: 1,
-        isFoil: false, language: 'en', notes: null, grade: null,
-        purchasePrice: null, createdAt: now, updatedAt: now,
+        id: 'c1', userId: 'u1', cardId: 1, setId: 'LOB',
+        condition: 'MINT', rarity: 'COMMON', quantity: 1,
+        language: 'en', notes: null, createdAt: now, updatedAt: now,
       };
       mockPrisma.userCollection.findUnique.mockResolvedValue(existingRow);
       mockPrisma.userCollection.delete.mockResolvedValue(existingRow);
@@ -241,23 +231,20 @@ describe('PrismaCollectionRepository', () => {
     it('should return entity when found', async () => {
       const now = new Date();
       mockPrisma.userCollection.findFirst.mockResolvedValue({
-        id: 'c1', userId: 'u1', cardId: 123, condition: 'MINT',
-        rarity: 'ULTRA_RARE', edition: 'FIRST_EDITION', quantity: 2,
-        isFoil: true, language: 'en', notes: null, grade: null,
-        purchasePrice: null, createdAt: now, updatedAt: now,
+        id: 'c1', userId: 'u1', cardId: 123, setId: 'LOB',
+        condition: 'MINT', rarity: 'ULTRA_RARE', quantity: 2,
+        language: 'en', notes: null, createdAt: now, updatedAt: now,
       });
 
       const result = await repository.findByUnique({
-        userId: 'u1', cardId: 123, condition: CardCondition.MINT,
-        rarity: CardRarity.ULTRA_RARE, edition: CardEdition.FIRST_EDITION,
-        isFoil: true, language: 'en',
+        userId: 'u1', cardId: 123, setId: 'LOB', condition: CardCondition.MINT,
+        rarity: CardRarity.ULTRA_RARE, language: 'en',
       });
 
       expect(mockPrisma.userCollection.findFirst).toHaveBeenCalledWith({
         where: {
-          userId: 'u1', cardId: 123, condition: CardCondition.MINT,
-          rarity: CardRarity.ULTRA_RARE, edition: CardEdition.FIRST_EDITION,
-          isFoil: true, language: 'en',
+          userId: 'u1', cardId: 123, setId: 'LOB', condition: CardCondition.MINT,
+          rarity: CardRarity.ULTRA_RARE, language: 'en',
         },
       });
       expect(result).not.toBeNull();
@@ -268,9 +255,8 @@ describe('PrismaCollectionRepository', () => {
       mockPrisma.userCollection.findFirst.mockResolvedValue(null);
 
       const result = await repository.findByUnique({
-        userId: 'u1', cardId: 999, condition: CardCondition.MINT,
-        rarity: CardRarity.ULTRA_RARE, edition: CardEdition.FIRST_EDITION,
-        isFoil: true, language: 'en',
+        userId: 'u1', cardId: 999, setId: 'LOB', condition: CardCondition.MINT,
+        rarity: CardRarity.ULTRA_RARE, language: 'en',
       });
 
       expect(result).toBeNull();
@@ -295,10 +281,6 @@ describe('PrismaCollectionRepository', () => {
         .mockResolvedValueOnce([
           { condition: 'MINT', _count: 4 },
           { condition: 'PLAYED', _count: 1 },
-        ])
-        .mockResolvedValueOnce([
-          { edition: 'FIRST_EDITION', _count: 3 },
-          { edition: 'UNLIMITED', _count: 2 },
         ]);
 
       const stats = await repository.getStats('u1');
@@ -308,7 +290,6 @@ describe('PrismaCollectionRepository', () => {
       expect(stats.totalQuantity).toBe(15);
       expect(stats.byRarity).toEqual({ ULTRA_RARE: 3, COMMON: 2 });
       expect(stats.byCondition).toEqual({ MINT: 4, PLAYED: 1 });
-      expect(stats.byEdition).toEqual({ FIRST_EDITION: 3, UNLIMITED: 2 });
       expect(stats.lastUpdated).toEqual(now);
     });
 
@@ -321,7 +302,6 @@ describe('PrismaCollectionRepository', () => {
         .mockResolvedValueOnce({ _max: { updatedAt: null } });
       mockPrisma.userCollection.groupBy
         .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([])
         .mockResolvedValueOnce([]);
 
       const stats = await repository.getStats('u1');
@@ -331,7 +311,6 @@ describe('PrismaCollectionRepository', () => {
       expect(stats.totalQuantity).toBe(0);
       expect(stats.byRarity).toEqual({});
       expect(stats.byCondition).toEqual({});
-      expect(stats.byEdition).toEqual({});
       expect(stats.lastUpdated).toBeInstanceOf(Date);
     });
   });

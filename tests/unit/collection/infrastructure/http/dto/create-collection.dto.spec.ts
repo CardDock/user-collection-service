@@ -6,10 +6,9 @@ import { CreateCollectionDto } from '../../../../../../src/collection/infrastruc
 describe('CreateCollectionDto', () => {
   const validDto = {
     cardId: 123,
+    setId: 'LOB',
     condition: 'MINT',
     rarity: 'ULTRA_RARE',
-    edition: 'FIRST_EDITION',
-    isFoil: true,
     language: 'en',
   };
 
@@ -24,8 +23,6 @@ describe('CreateCollectionDto', () => {
       ...validDto,
       quantity: 3,
       notes: 'my notes',
-      grade: '9.5',
-      purchasePrice: 25.99,
     });
     const errors = await validate(dto);
     expect(errors).toHaveLength(0);
@@ -37,10 +34,9 @@ describe('CreateCollectionDto', () => {
     expect(errors.length).toBeGreaterThanOrEqual(5);
     const fieldNames = errors.map((e) => e.property);
     expect(fieldNames).toContain('cardId');
+    expect(fieldNames).toContain('setId');
     expect(fieldNames).toContain('condition');
     expect(fieldNames).toContain('rarity');
-    expect(fieldNames).toContain('edition');
-    expect(fieldNames).toContain('isFoil');
     expect(fieldNames).toContain('language');
   });
 
@@ -49,13 +45,11 @@ describe('CreateCollectionDto', () => {
       ...validDto,
       condition: 'INVALID',
       rarity: 'INVALID',
-      edition: 'INVALID',
     });
     const errors = await validate(dto);
     const fieldNames = errors.map((e) => e.property);
     expect(fieldNames).toContain('condition');
     expect(fieldNames).toContain('rarity');
-    expect(fieldNames).toContain('edition');
   });
 
   it('should reject cardId that is not an integer', async () => {

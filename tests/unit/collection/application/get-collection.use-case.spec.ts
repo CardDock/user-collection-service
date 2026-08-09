@@ -9,7 +9,6 @@ import { UserCollectionEntity } from '../../../../src/collection/domain/user-col
 import {
   CardCondition,
   CardRarity,
-  CardEdition,
 } from '../../../../src/collection/domain/enums';
 
 describe('GetCollectionService', () => {
@@ -37,14 +36,11 @@ describe('GetCollectionService', () => {
           '1',
           userId,
           123,
+          'LOB',
           CardCondition.MINT,
           CardRarity.ULTRA_RARE,
-          CardEdition.FIRST_EDITION,
           2,
-          true,
           'en',
-          null,
-          null,
           null,
           new Date(),
           new Date(),
@@ -76,8 +72,7 @@ describe('GetCollectionService', () => {
         ...defaultQuery,
         condition: CardCondition.MINT,
         rarity: CardRarity.ULTRA_RARE,
-        edition: CardEdition.FIRST_EDITION,
-        isFoil: true,
+        cardId: 4031928,
       });
 
       expect(mockRepo.findMany).toHaveBeenCalledWith(
@@ -85,8 +80,7 @@ describe('GetCollectionService', () => {
           userId,
           condition: CardCondition.MINT,
           rarity: CardRarity.ULTRA_RARE,
-          edition: CardEdition.FIRST_EDITION,
-          isFoil: true,
+          cardId: 4031928,
         }),
         expect.any(Object),
         expect.any(Number),
@@ -134,14 +128,11 @@ describe('GetCollectionService', () => {
         'card-1',
         'user-1',
         456,
+        'SDY',
         CardCondition.MINT,
         CardRarity.ULTRA_RARE,
-        CardEdition.FIRST_EDITION,
         1,
-        false,
         'en',
-        null,
-        null,
         null,
         new Date(),
         new Date(),

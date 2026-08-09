@@ -1,6 +1,19 @@
-import { IsOptional, IsInt, IsString, IsNumber, Min } from 'class-validator';
+import { IsOptional, IsInt, IsString, Min, IsEnum } from 'class-validator';
+import { CardCondition, CardRarity } from '../../../domain/enums';
 
 export class UpdateCollectionDto {
+  @IsOptional()
+  @IsEnum(CardCondition)
+  condition?: CardCondition;
+
+  @IsOptional()
+  @IsEnum(CardRarity)
+  rarity?: CardRarity;
+
+  @IsOptional()
+  @IsString()
+  language?: string;
+
   @IsOptional()
   @IsInt()
   @Min(1)
@@ -8,13 +21,9 @@ export class UpdateCollectionDto {
 
   @IsOptional()
   @IsString()
-  notes?: string;
+  setId?: string;
 
   @IsOptional()
   @IsString()
-  grade?: string;
-
-  @IsOptional()
-  @IsNumber()
-  purchasePrice?: number;
+  notes?: string;
 }

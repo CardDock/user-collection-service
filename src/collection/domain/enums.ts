@@ -18,8 +18,3 @@ export enum CardRarity {
   STARLIGHT_RARE = 'STARLIGHT_RARE',
   COLLECTORS_RARE = 'COLLECTORS_RARE',
 }
-
-export enum CardEdition {
-  FIRST_EDITION = 'FIRST_EDITION',
-  UNLIMITED = 'UNLIMITED',
-}

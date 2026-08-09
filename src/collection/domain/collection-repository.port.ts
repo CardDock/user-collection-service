@@ -1,5 +1,5 @@
 import { UserCollectionEntity } from './user-collection.entity';
-import { CardCondition, CardRarity, CardEdition } from './enums';
+import { CardCondition, CardRarity } from './enums';
 
 export const COLLECTION_REPOSITORY_PORT = Symbol('COLLECTION_REPOSITORY_PORT');
 
@@ -7,40 +7,37 @@ export interface CollectionWhereInput {
   userId?: string;
   condition?: CardCondition;
   rarity?: CardRarity;
-  edition?: CardEdition;
-  isFoil?: boolean;
   cardId?: number;
+  setId?: string;
   id?: string;
 }
 
 export interface CreateCollectionInput {
   userId: string;
   cardId: number;
+  setId: string;
   condition: CardCondition;
   rarity: CardRarity;
-  edition: CardEdition;
   quantity: number;
-  isFoil: boolean;
   language: string;
   notes?: string | null;
-  grade?: string | null;
-  purchasePrice?: number | null;
 }
 
 export interface UpdateCollectionInput {
+  condition?: CardCondition;
+  rarity?: CardRarity;
+  language?: string;
   quantity?: number;
+  setId?: string;
   notes?: string | null;
-  grade?: string | null;
-  purchasePrice?: number | null;
 }
 
 export interface UniqueCollectionInput {
   userId: string;
   cardId: number;
+  setId: string;
   condition: CardCondition;
   rarity: CardRarity;
-  edition: CardEdition;
-  isFoil: boolean;
   language: string;
 }
 
@@ -50,7 +47,6 @@ export interface CollectionStats {
   totalQuantity: number;
   byRarity: Record<string, number>;
   byCondition: Record<string, number>;
-  byEdition: Record<string, number>;
   lastUpdated: Date;
 }
 
