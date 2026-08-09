@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: user-collection-service
+    ports:
+      - "3002:3002"
+      - "9230:9229"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    command: ["sh", "-c", "pnpm prisma generate && pnpm start:dev"]
+volumes:
+  node_modules:
