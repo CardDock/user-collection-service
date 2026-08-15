@@ -4,9 +4,6 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: user-collection-service
-    ports:
-      - "3002:3002"
-      - "9230:9229"
     env_file:
       - .env
     environment:
@@ -15,5 +12,13 @@ services:
       - .:/app
       - node_modules:/app/node_modules
     command: ["sh", "-c", "pnpm prisma generate && pnpm start:dev"]
+    networks:
+      - default
+
 volumes:
   node_modules:
+
+networks:
+  default:
+    external: true
+    name: carddock-network
